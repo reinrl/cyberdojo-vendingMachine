@@ -39,6 +39,8 @@ Assumptions
   - weights are all grams
   - diameters are all millimeters
 
+---
+
 ### DAY TWO!
 
 #### Select Product
@@ -71,6 +73,8 @@ that they just provided us).
 
 When the return coins button is pressed, the money the customer has placed in the machine is returned and the display shows
 INSERT COIN. Assume that we simply return the coins that they just provided us.
+
+---
 
 ### DAY THREE!
 
