@@ -1,0 +1,14 @@
+{
+  "dependencies": {
+    "jest": "~29.4.1"
+  },
+  "scripts": {
+    "lint": "eslint --config ${CYBER_DOJO_SANDBOX}/.eslintrc.json /**/*.js",
+    "test": "jest --coverage"
+  },
+  "jest": {
+    "coverageReporters": [
+      "text"
+    ]
+  }
+}
