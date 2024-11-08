@@ -337,6 +337,32 @@ describe("vending machine", () => {
         expect(vendingMachine.checkDisplay()).toEqual("$1.25");
       });
 
+      it("out of stock with money, so I order a substitute", () => {
+        // insert cash money
+        for (let i = 0; i < 5; i++) {
+          vendingMachine.insertCoin(QUARTER);
+        }
+
+        // CANDY = .65
+        let returnState = vendingMachine.selectProduct("candy");
+
+        expect(returnState.display).toEqual("SOLD OUT");
+        expect(returnState.productReturn).toEqual(null);
+        expect(vendingMachine.checkDisplay()).toEqual("$1.25");
+        
+        // no candy, so I'll have chips instead
+        returnState = vendingMachine.selectProduct("chips");
+
+        // success!
+        expect(returnState.display).toEqual("THANK YOU");
+        expect(returnState.productReturn).toEqual("chips");
+        // .75 back
+        expect(returnState.coinReturn.length).toEqual(3);
+        expect(
+          returnState.coinReturn.filter((coin) => coin === QUARTER).length
+        ).toEqual(3);
+      });
+
       it("out of stock no money", () => {
         // CANDY = .65
         const returnState = vendingMachine.selectProduct("candy");
