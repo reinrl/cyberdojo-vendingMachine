@@ -10,7 +10,7 @@ portion of the effort will be in determining what tests should be written and, m
 
 ### DAY ONE!
 
-#### Accept Coins
+#### Accept Coins - DONE
 
 > _As a vendor_  
 > _I want a vending machine that accepts coins_  
@@ -43,7 +43,7 @@ Assumptions
 
 ### DAY TWO!
 
-#### Select Product
+#### Select Product - DONE
 
 > _As a vendor_  
 > _I want customers to select products_  
@@ -55,7 +55,7 @@ checked again, it will display INSERT COIN and the current amount will be set to
 inserted then the machine displays PRICE and the price of the item and subsequent checks of the display will display
 either INSERT COIN or the current amount as appropriate.
 
-#### Make Change
+#### Make Change - DONE
 
 > _As a vendor_  
 > _I want customers to receive correct change_  
@@ -65,7 +65,7 @@ When a product is selected that costs less than the amount of money in the machi
 in the coin return. Assume that we want to return change in as few coins as possible (which may or may not be the coins
 that they just provided us).
 
-#### Return Coins
+#### Return Coins - DONE
 
 > _As a customer_  
 > _I want to have my money returned_  
@@ -78,7 +78,7 @@ INSERT COIN. Assume that we simply return the coins that they just provided us.
 
 ### DAY THREE!
 
-#### Sold Out
+#### Sold Out - DONE
 
 > _As a customer_  
 > _I want to be told when the item I have selected is not available_  
