@@ -22,22 +22,62 @@ const machineState = {
 class VendingMachine {
   // private variables - the starting point
   #availableBalance = 0;
+  #availableChange = [
+    { id: "nickel", count: 0 },
+    { id: "dime", count: 0 },
+    { id: "quarter", count: 0 },
+    { id: "half_dollar", count: 0 },
+    { id: "sacagawea_dollar", count: 0 },
+  ];
   #coinReturn = [];
   #inventory = [];
 
-  constructor(inventory) {
+  constructor(inventory, change = []) {
     // time to stock our machine
     this.#inventory = [...inventory];
+    // time to add some change
+    if (change?.length > 0) {
+      change.forEach((changeType) => {
+        const currentChangeSlot = this.#availableChange.findIndex(
+          (slot) => changeType.id === slot.id
+        );
+        if (currentChangeSlot > -1) {
+          this.#availableChange[currentChangeSlot] = {
+            ...this.#availableChange[currentChangeSlot],
+            count: changeType.count,
+          };
+        }
+      });
+    }
   }
 
   ///////////////////////
   // Private functions //
   ///////////////////////
+  #ableToMakeChange() {
+    // if we are truly empty, nothing that we can do
+    if (
+      this.#availableChange.reduce(
+        (accumulator, current) => accumulator + current.count,
+        0
+      ) === 0
+    ) {
+      return false;
+    }
+
+    // otherwise, our coin count for each type of coin must be above the specified threshold
+    return this.#availableChange.every((coin) => coin.count >= 5);
+  }
+
   #formatForDisplay(balance) {
     const displayFormatter = new Intl.NumberFormat("en-US", {
       style: "currency",
       currency: "USD",
     });
+
+    if (!this.#ableToMakeChange()) {
+      return "EXACT CHANGE ONLY";
+    }
 
     return balance === 0
       ? "INSERT COIN"

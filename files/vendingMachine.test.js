@@ -28,6 +28,22 @@ const candyLessInventory = inventory.map((product) => {
   }
 });
 
+const pileOChange = [
+  { id: "nickel", count: 10 },
+  { id: "dime", count: 10 },
+  { id: "quarter", count: 10 },
+  { id: "half_dollar", count: 10 },
+  { id: "sacagawea_dollar", count: 10 },
+];
+
+const minimalPileOChange = [
+  { id: "nickel", count: 5 },
+  { id: "dime", count: 5 },
+  { id: "quarter", count: 4 },
+  { id: "half_dollar", count: 5 },
+  { id: "sacagawea_dollar", count: 5 },
+];
+
 // object under test
 const VendingMachine = require("./vendingMachine");
 
@@ -35,9 +51,9 @@ const VendingMachine = require("./vendingMachine");
 let vendingMachine;
 
 describe("vending machine", () => {
-  describe("add", () => {
+  describe("insertCoin", () => {
     beforeEach(() => {
-      vendingMachine = new VendingMachine(inventory);
+      vendingMachine = new VendingMachine(inventory, pileOChange);
     });
 
     it('shows "INSERT COIN" when no coins added', () => {
@@ -46,82 +62,123 @@ describe("vending machine", () => {
 
     it("rejects pennies", () => {
       const returnState = vendingMachine.insertCoin(PENNY);
-      expect(vendingMachine.checkDisplay()).toEqual("INSERT COIN");
-      expect(returnState.display).toEqual("INSERT COIN");
-      expect(returnState.coinReturn).toEqual([PENNY]);
-      expect(returnState.productReturn).toEqual(null);
+
+      expect(returnState).toEqual(
+        expect.objectContaining({
+          display: "INSERT COIN",
+          coinReturn: [PENNY],
+          productReturn: null,
+        })
+      );
     });
 
     it("rejects Chuck-E-Cheese tokens", () => {
       const returnState = vendingMachine.insertCoin(CHUCK_E_CHEESE_TOKEN);
-      expect(vendingMachine.checkDisplay()).toEqual("INSERT COIN");
-      expect(returnState.display).toEqual("INSERT COIN");
-      expect(returnState.coinReturn).toEqual([CHUCK_E_CHEESE_TOKEN]);
-      expect(returnState.productReturn).toEqual(null);
+
+      expect(returnState).toEqual(
+        expect.objectContaining({
+          display: "INSERT COIN",
+          coinReturn: [CHUCK_E_CHEESE_TOKEN],
+          productReturn: null,
+        })
+      );
     });
 
     it("adds a nickel", () => {
       const returnState = vendingMachine.insertCoin(NICKEL);
-      expect(vendingMachine.checkDisplay()).toEqual("$0.05");
-      expect(returnState.display).toEqual("$0.05");
-      expect(returnState.coinReturn).toEqual(null);
-      expect(returnState.productReturn).toEqual(null);
+
+      expect(returnState).toEqual(
+        expect.objectContaining({
+          display: "$0.05",
+          coinReturn: null,
+          productReturn: null,
+        })
+      );
     });
 
     it("adds a dime", () => {
       const returnState = vendingMachine.insertCoin(DIME);
-      expect(vendingMachine.checkDisplay()).toEqual("$0.10");
-      expect(returnState.display).toEqual("$0.10");
-      expect(returnState.coinReturn).toEqual(null);
-      expect(returnState.productReturn).toEqual(null);
+
+      expect(returnState).toEqual(
+        expect.objectContaining({
+          display: "$0.10",
+          coinReturn: null,
+          productReturn: null,
+        })
+      );
     });
 
     it("adds a quarter", () => {
       const returnState = vendingMachine.insertCoin(QUARTER);
-      expect(vendingMachine.checkDisplay()).toEqual("$0.25");
-      expect(returnState.display).toEqual("$0.25");
-      expect(returnState.coinReturn).toEqual(null);
-      expect(returnState.productReturn).toEqual(null);
+
+      expect(returnState).toEqual(
+        expect.objectContaining({
+          display: "$0.25",
+          coinReturn: null,
+          productReturn: null,
+        })
+      );
     });
 
     // QUESTION!!!! IF THEY ADD SEVEN PENNYS DOES THE RETURN LIST GROW? OR DO WE ASSUME THE USER GRABS EACH IMMEDIATELY IN THE RETURN???????
     it("adds a mix of coins", () => {
       let returnState = vendingMachine.insertCoin(PENNY);
-      expect(returnState.display).toEqual("INSERT COIN");
-      expect(returnState.coinReturn).toEqual([PENNY]);
-      expect(returnState.productReturn).toEqual(null);
+      expect(returnState).toEqual(
+        expect.objectContaining({
+          display: "INSERT COIN",
+          coinReturn: [PENNY],
+          productReturn: null,
+        })
+      );
 
       returnState = vendingMachine.insertCoin(NICKEL);
-      expect(returnState.display).toEqual("$0.05");
-      expect(returnState.coinReturn).toEqual(null);
-      expect(returnState.productReturn).toEqual(null);
+      expect(returnState).toEqual(
+        expect.objectContaining({
+          display: "$0.05",
+          coinReturn: null,
+          productReturn: null,
+        })
+      );
 
       returnState = vendingMachine.insertCoin(DIME);
-      expect(returnState.display).toEqual("$0.15");
-      expect(returnState.coinReturn).toEqual(null);
-      expect(returnState.productReturn).toEqual(null);
+      expect(returnState).toEqual(
+        expect.objectContaining({
+          display: "$0.15",
+          coinReturn: null,
+          productReturn: null,
+        })
+      );
 
       returnState = vendingMachine.insertCoin(QUARTER);
-      expect(returnState.display).toEqual("$0.40");
-      expect(returnState.coinReturn).toEqual(null);
-      expect(returnState.productReturn).toEqual(null);
-
-      expect(vendingMachine.checkDisplay()).toEqual("$0.40");
+      expect(returnState).toEqual(
+        expect.objectContaining({
+          display: "$0.40",
+          coinReturn: null,
+          productReturn: null,
+        })
+      );
     });
 
     it("rolls over a dollar quite nicely", () => {
+      let returnState = {};
       for (let i = 0; i <= 10; i++) {
-        vendingMachine.insertCoin(DIME);
+        returnState = vendingMachine.insertCoin(DIME);
       }
 
-      expect(vendingMachine.checkDisplay()).toEqual("$1.10");
+      expect(returnState).toEqual(
+        expect.objectContaining({
+          display: "$1.10",
+          coinReturn: null,
+          productReturn: null,
+        })
+      );
     });
   });
 
-  describe("purchase", () => {
+  describe("selectProduct", () => {
     describe("check price (no money yet)", () => {
       beforeEach(() => {
-        vendingMachine = new VendingMachine(inventory);
+        vendingMachine = new VendingMachine(inventory, pileOChange);
       });
 
       it("check the price of candy", () => {
@@ -148,7 +205,7 @@ describe("vending machine", () => {
 
     describe("not enough change entered", () => {
       beforeEach(() => {
-        vendingMachine = new VendingMachine(inventory);
+        vendingMachine = new VendingMachine(inventory, pileOChange);
         vendingMachine.insertCoin(QUARTER);
       });
 
@@ -176,7 +233,7 @@ describe("vending machine", () => {
 
     describe("exact change entered", () => {
       beforeEach(() => {
-        vendingMachine = new VendingMachine(inventory);
+        vendingMachine = new VendingMachine(inventory, pileOChange);
       });
 
       it("purchase candy", () => {
@@ -189,9 +246,13 @@ describe("vending machine", () => {
         const returnState = vendingMachine.selectProduct("candy");
 
         // verify the expected outcome
-        expect(returnState.display).toEqual("THANK YOU");
-        expect(returnState.coinReturn).toEqual(null);
-        expect(returnState.productReturn).toEqual("candy");
+        expect(returnState).toEqual(
+          expect.objectContaining({
+            display: "THANK YOU",
+            coinReturn: null,
+            productReturn: "candy",
+          })
+        );
 
         // check the display again for good measure
         expect(vendingMachine.checkDisplay()).toEqual("INSERT COIN");
@@ -205,9 +266,13 @@ describe("vending machine", () => {
         const returnState = vendingMachine.selectProduct("chips");
 
         // verify the expected outcome
-        expect(returnState.display).toEqual("THANK YOU");
-        expect(returnState.coinReturn).toEqual(null);
-        expect(returnState.productReturn).toEqual("chips");
+        expect(returnState).toEqual(
+          expect.objectContaining({
+            display: "THANK YOU",
+            coinReturn: null,
+            productReturn: "chips",
+          })
+        );
 
         // check the display again for good measure
         expect(vendingMachine.checkDisplay()).toEqual("INSERT COIN");
@@ -221,9 +286,13 @@ describe("vending machine", () => {
         const returnState = vendingMachine.selectProduct("cola");
 
         // verify the expected outcome
-        expect(returnState.display).toEqual("THANK YOU");
-        expect(returnState.coinReturn).toEqual(null);
-        expect(returnState.productReturn).toEqual("cola");
+        expect(returnState).toEqual(
+          expect.objectContaining({
+            display: "THANK YOU",
+            coinReturn: null,
+            productReturn: "cola",
+          })
+        );
 
         // check the display again for good measure
         expect(vendingMachine.checkDisplay()).toEqual("INSERT COIN");
@@ -232,7 +301,7 @@ describe("vending machine", () => {
 
     describe("too much change entered", () => {
       beforeEach(() => {
-        vendingMachine = new VendingMachine(inventory);
+        vendingMachine = new VendingMachine(inventory, pileOChange);
       });
 
       it("purchase candy", () => {
@@ -300,7 +369,7 @@ describe("vending machine", () => {
 
     describe("should I no longer be hungry...I don't want to be broke", () => {
       beforeEach(() => {
-        vendingMachine = new VendingMachine(inventory);
+        vendingMachine = new VendingMachine(inventory, pileOChange);
       });
 
       it("should return all of the things", () => {
@@ -313,14 +382,18 @@ describe("vending machine", () => {
 
         const returnState = vendingMachine.returnCoins();
 
-        expect(returnState.display).toEqual("INSERT COIN");
-        expect(returnState.coinReturn).toEqual(expectedCoinReturn);
+        expect(returnState).toEqual(
+          expect.objectContaining({
+            display: "INSERT COIN",
+            coinReturn: expectedCoinReturn,
+          })
+        );
       });
     });
 
     describe("check stock", () => {
       beforeEach(() => {
-        vendingMachine = new VendingMachine(candyLessInventory);
+        vendingMachine = new VendingMachine(candyLessInventory, pileOChange);
       });
 
       it("out of stock with money", () => {
@@ -332,8 +405,13 @@ describe("vending machine", () => {
         // CANDY = .65
         const returnState = vendingMachine.selectProduct("candy");
 
-        expect(returnState.display).toEqual("SOLD OUT");
-        expect(returnState.productReturn).toEqual(null);
+        expect(returnState).toEqual(
+          expect.objectContaining({
+            display: "SOLD OUT",
+            coinReturn: null,
+            productReturn: null,
+          })
+        );
         expect(vendingMachine.checkDisplay()).toEqual("$1.25");
       });
 
@@ -346,10 +424,15 @@ describe("vending machine", () => {
         // CANDY = .65
         let returnState = vendingMachine.selectProduct("candy");
 
-        expect(returnState.display).toEqual("SOLD OUT");
-        expect(returnState.productReturn).toEqual(null);
+        expect(returnState).toEqual(
+          expect.objectContaining({
+            display: "SOLD OUT",
+            coinReturn: null,
+            productReturn: null,
+          })
+        );
         expect(vendingMachine.checkDisplay()).toEqual("$1.25");
-        
+
         // no candy, so I'll have chips instead
         returnState = vendingMachine.selectProduct("chips");
 
@@ -367,8 +450,13 @@ describe("vending machine", () => {
         // CANDY = .65
         const returnState = vendingMachine.selectProduct("candy");
 
-        expect(returnState.display).toEqual("SOLD OUT");
-        expect(returnState.productReturn).toEqual(null);
+        expect(returnState).toEqual(
+          expect.objectContaining({
+            display: "SOLD OUT",
+            coinReturn: null,
+            productReturn: null,
+          })
+        );
         expect(vendingMachine.checkDisplay()).toEqual("INSERT COIN");
       });
 
@@ -385,9 +473,42 @@ describe("vending machine", () => {
 
         // COLA = 1.00
         returnState = vendingMachine.selectProduct("cola");
-        expect(returnState.display).toEqual("SOLD OUT");
-        expect(returnState.productReturn).toEqual(null);
+        expect(returnState).toEqual(
+          expect.objectContaining({
+            display: "SOLD OUT",
+            coinReturn: null,
+            productReturn: null,
+          })
+        );
         expect(vendingMachine.checkDisplay()).toEqual("$1.00");
+      });
+    });
+
+    describe("exact change only", () => {
+      let vendingMachine;
+
+      it('shows "EXACT CHANGE ONLY" when no change available', () => {
+        vendingMachine = new VendingMachine(inventory);
+
+        expect(vendingMachine.checkDisplay()).toEqual("EXACT CHANGE ONLY");
+      });
+
+      it('shows "EXACT CHANGE ONLY" when too few change available', () => {
+        vendingMachine = new VendingMachine(inventory, minimalPileOChange);
+
+        expect(vendingMachine.checkDisplay()).toEqual("EXACT CHANGE ONLY");
+      });
+
+      it("cares not for your play money", () => {
+        vendingMachine = new VendingMachine(inventory, [
+          ...minimalPileOChange,
+          {
+            id: "penny",
+            count: 5000,
+          },
+        ]);
+
+        expect(vendingMachine.checkDisplay()).toEqual("EXACT CHANGE ONLY");
       });
     });
   });
